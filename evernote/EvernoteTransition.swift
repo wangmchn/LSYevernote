@@ -70,7 +70,6 @@ class EvernoteTransition: NSObject,UIViewControllerAnimatedTransitioning,UIViewC
                 }
                 self.selectCell.backButton.alpha = self.isPresent ? 1.0 : 0.0
                 self.selectCell.titleLine.alpha = self.isPresent ? 1.0 : 0.0
-                self.selectCell.textView.contentOffset = CGPointMake(0, 0)
                 self.selectCell.textView.alpha = self.isPresent ? 1.0 : 0.0
 
                 self.selectCell.frame = self.isPresent ? self.finalFrame : self.originFrame
@@ -94,7 +93,6 @@ class EvernoteTransition: NSObject,UIViewControllerAnimatedTransitioning,UIViewC
     }
     
     func interactionControllerForDismissal(animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-        self.isPresent = false
         return interactionController
     }
     
