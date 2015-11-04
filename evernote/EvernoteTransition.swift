@@ -48,28 +48,33 @@ class EvernoteTransition: NSObject,UIViewControllerAnimatedTransitioning,UIViewC
         selectCell.addConstraint(addCons)
 
         UIView.animateWithDuration(self.transitionDuration(transitionContext), delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
-            for visibleCell:CollectionViewCell in self.visibleCells {
-                if visibleCell != self.selectCell {
-                    var frame = visibleCell.frame
-                    if visibleCell.tag < self.selectCell.tag {
-                        let yDistance = self.originFrame.origin.y - self.finalFrame.origin.y + 30
-                        let yUpdate = self.isPresent ? yDistance : -yDistance
-                        frame.origin.y -= yUpdate
-                    }else if visibleCell.tag > self.selectCell.tag{
-                        let yDistance = CGRectGetMaxY(self.finalFrame) - CGRectGetMaxY(self.originFrame) + 30
-                        let yUpdate = self.isPresent ? yDistance : -yDistance
-                        frame.origin.y += yUpdate
+                let numbersOfVisibleCells = self.visibleCells.count - 1
+                for visibleCell:CollectionViewCell in self.visibleCells {
+                    if visibleCell != self.selectCell {
+                        var frame = visibleCell.frame
+                        if visibleCell.tag < self.selectCell.tag {
+                            let yDistance = self.originFrame.origin.y - self.finalFrame.origin.y + 30
+                            let yUpdate = self.isPresent ? yDistance : -yDistance
+                            frame.origin.y -= yUpdate
+                        }else if visibleCell.tag > self.selectCell.tag{
+                            let yDistance = CGRectGetMaxY(self.finalFrame) - CGRectGetMaxY(self.originFrame) + 30
+                            let yUpdate = self.isPresent ? yDistance : -yDistance
+                            frame.origin.y += yUpdate
+                        }
+                        visibleCell.frame = frame
+                        let rate: CGFloat = fabs(CGFloat(visibleCell.tag - self.selectCell.tag)) / CGFloat(numbersOfVisibleCells)
+                        let scaleX = 1.0 - 0.8 * rate
+    //                    let scaleX: CGFloat = 0.8
+                        visibleCell.transform = self.isPresent ? CGAffineTransformMakeScale(scaleX, 1.0):CGAffineTransformIdentity
                     }
-                    visibleCell.frame = frame
-                    visibleCell.transform = self.isPresent ? CGAffineTransformMakeScale(0.8, 1.0):CGAffineTransformIdentity
                 }
-            }
-            self.selectCell.backButton.alpha = self.isPresent ? 1.0 : 0.0
-            self.selectCell.titleLine.alpha = self.isPresent ? 1.0 : 0.0
-            self.selectCell.textView.contentOffset = CGPointMake(0, 0)
-            self.selectCell.textView.alpha = self.isPresent ? 1.0 : 0.0
-            self.selectCell.frame = self.isPresent ? self.finalFrame : self.originFrame
-            self.selectCell.layoutIfNeeded()
+                self.selectCell.backButton.alpha = self.isPresent ? 1.0 : 0.0
+                self.selectCell.titleLine.alpha = self.isPresent ? 1.0 : 0.0
+                self.selectCell.textView.contentOffset = CGPointMake(0, 0)
+                self.selectCell.textView.alpha = self.isPresent ? 1.0 : 0.0
+
+                self.selectCell.frame = self.isPresent ? self.finalFrame : self.originFrame
+                self.selectCell.layoutIfNeeded()
             }) { (stop) -> Void in
                 addView!.hidden = false
                 transitionContext.completeTransition(true)
